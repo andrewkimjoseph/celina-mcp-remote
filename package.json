@@ -1,6 +1,6 @@
 {
   "name": "celina-mcp-remote",
-  "version": "0.1.42",
+  "version": "0.1.43",
   "private": true,
   "description": "Vercel-hosted remote read-only Streamable HTTP endpoint for @andrewkimjoseph/celina-mcp",
   "type": "module",
@@ -13,7 +13,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@andrewkimjoseph/celina-mcp": "0.18.12",
+    "@andrewkimjoseph/celina-mcp": "0.18.13",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "ox": "^0.10.0"
   },
