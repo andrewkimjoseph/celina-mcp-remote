@@ -8,7 +8,7 @@ Backend-only Vercel deployment that exposes [celina-mcp](../celina-mcp) over **S
 
 This is the **hosted read/prepare profile** of the shared [`@andrewkimjoseph/celina-sdk/tools`](https://www.npmjs.com/package/@andrewkimjoseph/celina-sdk) catalog — the same definitions local stdio MCP and browser wallet apps use, filtered with no server keys.
 
-**Tool surface:** **45 tools** — chain reads, humanness check, governance/staking reads (including `get_governance_delegates`), oracle/AMM quotes (`get_mento_fx_quote`, `get_uniswap_quote`, `get_gooddollar_reserve_quote`), attribution (`check_attribution_tag`, `verify_attribution_tag`), Aave supplied balances, GoodDollar identity link/whitelist/entitlement, Self verify/lookup, and AgentKarma reputation. No `CELO_PRIVATE_KEY` or `SELF_AGENT_PRIVATE_KEY` on the server; **`estimate_*`**, server-key writes (`send_token`, `execute_lock_celo`, `execute_stake`, etc.), `get_wallet_address`, GoodDollar claim/connect/disconnect writes, Self lifecycle, and Self registration session tools are **omitted** from `tools/list`.
+**Tool surface:** **46 tools** — chain reads, humanness check, governance/staking reads (including `get_governance_delegates`, `get_governance_delegate_details`), oracle/AMM quotes (`get_mento_fx_quote`, `get_uniswap_quote`, `get_gooddollar_reserve_quote`), attribution (`check_attribution_tag`, `verify_attribution_tag`), Aave supplied balances, GoodDollar identity link/whitelist/entitlement, Self verify/lookup, and AgentKarma reputation. No `CELO_PRIVATE_KEY` or `SELF_AGENT_PRIVATE_KEY` on the server; **`estimate_*`**, server-key writes (`send_token`, `execute_lock_celo`, `execute_stake`, etc.), `get_wallet_address`, GoodDollar claim/connect/disconnect writes, Self lifecycle, and Self registration session tools are **omitted** from `tools/list`.
 
 GoodDollar: **`get_gooddollar_whitelisting_info`**, **`get_gooddollar_identity_link`**, **`get_gooddollar_ubi_entitlement`**, and **`get_gooddollar_reserve_quote`** on hosted. **`estimate_gooddollar_reserve_swap`**, **`execute_gooddollar_reserve_swap`**, **`claim_daily_gooddollar_ubi`**, and identity connect/disconnect writes require local stdio MCP with `CELO_PRIVATE_KEY`. See [GoodDollar section](../celina-mcp/README.md#gooddollar).
 
@@ -42,7 +42,7 @@ Requires Node.js ≥ 20. Install published npm packages — do not use local `fi
 
 ```bash
 npm run dev
-npm run test:smoke   # expects 45 hosted tools, estimate_* and server-key tools absent
+npm run test:smoke   # expects 46 hosted tools, estimate_* and server-key tools absent
 ```
 
 Connect MCP Inspector (Streamable HTTP) to `http://localhost:3000/api/mcp`.

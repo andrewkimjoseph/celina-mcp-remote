@@ -6,7 +6,7 @@ Production endpoint: [https://mcp.usecelina.xyz/api/mcp](https://mcp.usecelina.x
 
 This deployment is a **public, read-only / prepare-only** MCP server:
 
-- **45 tools** — chain reads, oracle/AMM quotes, governance/staking reads, Aave supplied balances, GoodDollar identity link/whitelist/entitlement, Self verify/lookup, AgentKarma reputation (read-only external API)
+- **46 tools** — chain reads, oracle/AMM quotes, governance/staking reads, Aave supplied balances, GoodDollar identity link/whitelist/entitlement, Self verify/lookup, AgentKarma reputation (read-only external API)
 - **No server signing keys** — `CELO_PRIVATE_KEY` and `SELF_AGENT_PRIVATE_KEY` are not configured
 - **No fund movement** — hosted `tools/call` cannot send tokens, execute swaps, or sign transactions; writes require a user wallet elsewhere (local stdio MCP, browser app, or wallet)
 
