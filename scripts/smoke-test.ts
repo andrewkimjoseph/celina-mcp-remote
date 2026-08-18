@@ -84,7 +84,7 @@ async function main(): Promise<void> {
     throw new Error("estimate_* must not be on hosted MCP");
   }
   if (tools.length !== 46) {
-    throw new Error(`expected 46 tools on hosted MCP, got ${tools.length}`);
+    throw new Error(`expected 48 tools on hosted MCP, got ${tools.length}`);
   }
   console.log("hosted tool surface check ok");
 
