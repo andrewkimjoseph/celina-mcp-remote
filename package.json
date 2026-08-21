@@ -13,7 +13,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@andrewkimjoseph/celina-mcp": "0.18.18",
+    "@andrewkimjoseph/celina-mcp": "0.18.19",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "ox": "^0.10.0"
   },
