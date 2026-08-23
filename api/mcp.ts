@@ -1,6 +1,10 @@
 import "ox";
+import { waitUntil } from "@vercel/functions";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { createServer } from "@andrewkimjoseph/celina-mcp/server";
+import {
+  createServer,
+  drainCelinaAnalytics,
+} from "@andrewkimjoseph/celina-mcp/server";
 
 function acceptsEventStream(request: Request): boolean {
   const accept = request.headers.get("accept") ?? "";
@@ -46,6 +50,7 @@ async function handleMcp(request: Request): Promise<Response> {
   await server.connect(transport);
   const response = await transport.handleRequest(request);
 
+  waitUntil(drainCelinaAnalytics());
   transport.close().catch(() => {});
   server.close().catch(() => {});
 
