@@ -4,7 +4,7 @@
 
 # Celina MCP Remote
 
-Backend-only Vercel deployment that exposes [celina-mcp](../celina-mcp) over **Streamable HTTP** and **A2A**. No Next.js, no UI.
+Celina is a third-party, open-source stack that gives an LLM read, prepare, and execute access to Celo mainnet through an SDK, an MCP server, and a REST API. This is the hosted MCP endpoint — a backend-only Vercel deployment that exposes [celina-mcp](../celina-mcp) over **Streamable HTTP** and **A2A**. No Next.js, no UI.
 
 This is the **hosted read/prepare profile** of the shared [`@andrewkimjoseph/celina-sdk/tools`](https://www.npmjs.com/package/@andrewkimjoseph/celina-sdk) catalog — the same definitions local stdio MCP and browser wallet apps use, filtered with no server keys.
 
