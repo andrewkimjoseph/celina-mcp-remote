@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/celina-banner.svg" alt="Celina — Give your LLM a wallet on Celo">
+  <img src="https://raw.githubusercontent.com/andrewkimjoseph/celina/main/assets/celina-banner.svg" alt="Celina — Give your LLM a wallet on Celo">
 </p>
 
 # Celina MCP Remote
