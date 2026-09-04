@@ -1,12 +1,9 @@
-import { GET, POST } from "../api/mcp.js";
-import { GET as a2aGet, POST as a2aPost } from "../api/a2a.js";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { app } from "../src/app.js";
 
 async function main(): Promise<void> {
-  const probeRes = await GET(
-    new Request("http://localhost/api/mcp", { method: "GET" }),
-  );
+  const probeRes = await app.request("/mcp", { method: "GET" });
   if (probeRes.status !== 200) {
     throw new Error(`expected GET probe status 200, got ${probeRes.status}`);
   }
@@ -27,7 +24,7 @@ async function main(): Promise<void> {
     },
   };
 
-  const req = new Request("http://localhost/api/mcp", {
+  const res = await app.request("/mcp", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -35,8 +32,6 @@ async function main(): Promise<void> {
     },
     body: JSON.stringify(initBody),
   });
-
-  const res = await POST(req);
   console.log("initialize status", res.status);
   const text = await res.text();
   console.log("initialize body", text.slice(0, 400));
@@ -48,7 +43,7 @@ async function main(): Promise<void> {
     params: {},
   };
 
-  const toolsReq = new Request("http://localhost/api/mcp", {
+  const toolsRes = await app.request("/mcp", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -56,8 +51,6 @@ async function main(): Promise<void> {
     },
     body: JSON.stringify(toolsBody),
   });
-
-  const toolsRes = await POST(toolsReq);
   console.log("tools/list status", toolsRes.status);
   const toolsText = await toolsRes.text();
   const parsed = JSON.parse(toolsText) as {
@@ -83,7 +76,7 @@ async function main(): Promise<void> {
   if (names.some((n) => n.startsWith("estimate_"))) {
     throw new Error("estimate_* must not be on hosted MCP");
   }
-  if (tools.length !== 46) {
+  if (tools.length !== 48) {
     throw new Error(`expected 48 tools on hosted MCP, got ${tools.length}`);
   }
   console.log("hosted tool surface check ok");
@@ -102,16 +95,14 @@ async function main(): Promise<void> {
     },
   };
 
-  const verifyRes = await POST(
-    new Request("http://localhost/api/mcp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json, text/event-stream",
-      },
-      body: JSON.stringify(verifyBody),
-    }),
-  );
+  const verifyRes = await app.request("/mcp", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/event-stream",
+    },
+    body: JSON.stringify(verifyBody),
+  });
   const verifyText = await verifyRes.text();
   const verifyParsed = JSON.parse(verifyText) as {
     result?: {
@@ -138,24 +129,22 @@ async function main(): Promise<void> {
   }
   console.log("verify_self_agent ok");
 
-  const blockRes = await POST(
-    new Request("http://localhost/api/mcp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json, text/event-stream",
+  const blockRes = await app.request("/mcp", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/event-stream",
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 4,
+      method: "tools/call",
+      params: {
+        name: "get_block",
+        arguments: { block_id: " latest" },
       },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 4,
-        method: "tools/call",
-        params: {
-          name: "get_block",
-          arguments: { block_id: " latest" },
-        },
-      }),
     }),
-  );
+  });
   const blockText = await blockRes.text();
   const blockParsed = JSON.parse(blockText) as {
     result?: { isError?: boolean; structuredContent?: { hash?: string } };
@@ -168,28 +157,26 @@ async function main(): Promise<void> {
   }
   console.log("get_block ok");
 
-  const quoteRes = await POST(
-    new Request("http://localhost/api/mcp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json, text/event-stream",
-      },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 5,
-        method: "tools/call",
-        params: {
-          name: "get_mento_fx_quote",
-          arguments: {
-            token_in: "USDm",
-            token_out: "EURm",
-            amount: "1",
-          },
+  const quoteRes = await app.request("/mcp", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/event-stream",
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 5,
+      method: "tools/call",
+      params: {
+        name: "get_mento_fx_quote",
+        arguments: {
+          token_in: "USDm",
+          token_out: "EURm",
+          amount: "1",
         },
-      }),
+      },
     }),
-  );
+  });
   const quoteText = await quoteRes.text();
   const quoteParsed = JSON.parse(quoteText) as {
     result?: { isError?: boolean; structuredContent?: { expectedOut?: string } };
@@ -211,7 +198,7 @@ async function main(): Promise<void> {
     url?: string;
     skills?: unknown[];
   };
-  if (card.name !== "Celina" || !card.url?.endsWith("/api/a2a")) {
+  if (card.name !== "Celina" || !card.url?.endsWith("/a2a")) {
     throw new Error(`unexpected agent card: ${JSON.stringify(card).slice(0, 200)}`);
   }
   if (!card.skills?.length) {
@@ -252,45 +239,41 @@ async function main(): Promise<void> {
   }
   console.log("agent.json discovery services ok");
 
-  const a2aCardRes = await a2aGet(
-    new Request("http://localhost/api/a2a", { method: "GET" }),
-  );
+  const a2aCardRes = await app.request("/a2a", { method: "GET" });
   if (a2aCardRes.status !== 200) {
     throw new Error(`A2A GET card status ${a2aCardRes.status}`);
   }
   const liveCard = (await a2aCardRes.json()) as { url?: string };
-  if (!liveCard.url?.endsWith("/api/a2a")) {
+  if (!liveCard.url?.endsWith("/a2a")) {
     throw new Error(`A2A GET handler card missing url: ${JSON.stringify(liveCard)}`);
   }
   console.log("A2A GET agent card ok");
 
-  const a2aSendRes = await a2aPost(
-    new Request("http://localhost/api/a2a", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: "a2a-1",
-        method: "message/send",
-        params: {
-          message: {
-            messageId: crypto.randomUUID(),
-            role: "user",
-            kind: "message",
-            parts: [
-              {
-                kind: "data",
-                data: {
-                  tool: "get_network_status",
-                  arguments: {},
-                },
+  const a2aSendRes = await app.request("/a2a", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: "a2a-1",
+      method: "message/send",
+      params: {
+        message: {
+          messageId: crypto.randomUUID(),
+          role: "user",
+          kind: "message",
+          parts: [
+            {
+              kind: "data",
+              data: {
+                tool: "get_network_status",
+                arguments: {},
               },
-            ],
-          },
+            },
+          ],
         },
-      }),
+      },
     }),
-  );
+  });
   const a2aSendText = await a2aSendRes.text();
   if (a2aSendRes.status !== 200) {
     throw new Error(`A2A message/send status ${a2aSendRes.status}: ${a2aSendText}`);
@@ -306,33 +289,31 @@ async function main(): Promise<void> {
   }
   console.log("A2A get_network_status ok", dataPart.data.result.chainId);
 
-  const rejectRes = await a2aPost(
-    new Request("http://localhost/api/a2a", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: "a2a-2",
-        method: "message/send",
-        params: {
-          message: {
-            messageId: crypto.randomUUID(),
-            role: "user",
-            kind: "message",
-            parts: [
-              {
-                kind: "data",
-                data: {
-                  tool: "send_token",
-                  arguments: { to: "0x0", token: "USDm", amount: "1" },
-                },
+  const rejectRes = await app.request("/a2a", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: "a2a-2",
+      method: "message/send",
+      params: {
+        message: {
+          messageId: crypto.randomUUID(),
+          role: "user",
+          kind: "message",
+          parts: [
+            {
+              kind: "data",
+              data: {
+                tool: "send_token",
+                arguments: { to: "0x0", token: "USDm", amount: "1" },
               },
-            ],
-          },
+            },
+          ],
         },
-      }),
+      },
     }),
-  );
+  });
   const rejectText = await rejectRes.text();
   const rejectParsed = JSON.parse(rejectText) as {
     result?: { parts?: Array<{ kind: string; text?: string }> };
@@ -342,6 +323,13 @@ async function main(): Promise<void> {
     throw new Error(`expected send_token rejection, got: ${rejectText}`);
   }
   console.log("A2A write tool rejection ok");
+
+  const healthRes = await app.request("/health", { method: "GET" });
+  const healthBody = (await healthRes.json()) as { ok?: boolean };
+  if (healthRes.status !== 200 || healthBody.ok !== true) {
+    throw new Error(`health check failed: ${JSON.stringify(healthBody)}`);
+  }
+  console.log("health ok");
 }
 
 main().catch((error) => {

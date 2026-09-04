@@ -1,25 +1,29 @@
 {
   "name": "celina-mcp-remote",
-  "version": "0.1.45",
+  "version": "0.2.0",
   "private": true,
-  "description": "Vercel-hosted remote read-only Streamable HTTP endpoint for @andrewkimjoseph/celina-mcp",
+  "description": "Cloudflare Worker-hosted remote read-only Streamable HTTP + A2A endpoint for @andrewkimjoseph/celina-mcp",
   "type": "module",
   "scripts": {
-    "build": "echo \"discovery manifests live on celina-website/public/.well-known/\"",
-    "dev": "vercel dev",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
     "test:smoke": "npx tsx scripts/smoke-test.ts"
   },
   "engines": {
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@andrewkimjoseph/celina-mcp": "0.18.31",
+    "@andrewkimjoseph/celina-mcp": "0.18.34",
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "@vercel/functions": "^3.9.5",
+    "hono": "^4.9.6",
     "ox": "^0.10.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260815.1",
     "@types/node": "^22.0.0",
-    "typescript": "^5.8.2"
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.2",
+    "wrangler": "^4.28.0"
   }
 }

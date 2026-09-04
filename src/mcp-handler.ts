@@ -1,5 +1,4 @@
 import "ox";
-import { waitUntil } from "@vercel/functions";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import {
   createServer,
@@ -28,7 +27,10 @@ function probeResponse(request: Request): Response {
   });
 }
 
-async function handleMcp(request: Request): Promise<Response> {
+export async function handleMcp(
+  request: Request,
+  waitUntil: (promise: Promise<unknown>) => void,
+): Promise<Response> {
   const isProbe =
     (request.method === "GET" || request.method === "HEAD") &&
     !acceptsEventStream(request);
@@ -56,7 +58,3 @@ async function handleMcp(request: Request): Promise<Response> {
 
   return response;
 }
-
-export const POST = handleMcp;
-export const GET = handleMcp;
-export const DELETE = handleMcp;

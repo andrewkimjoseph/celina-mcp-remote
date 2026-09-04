@@ -1,6 +1,6 @@
 # Security — Celina remote MCP
 
-Production endpoint: [https://mcp.usecelina.xyz/api/mcp](https://mcp.usecelina.xyz/api/mcp)
+Production endpoint: [https://mcp.usecelina.xyz/mcp](https://mcp.usecelina.xyz/mcp)
 
 ## Deployment profile
 
@@ -12,7 +12,7 @@ This deployment is a **public, read-only / prepare-only** MCP server:
 
 ## Authentication
 
-**There is no API key or Bearer token on `/api/mcp`.** This is intentional:
+**There is no API key or Bearer token on `/mcp`.** This is intentional:
 
 - MCP clients (Cursor, Claude Desktop, mcp-remote, etc.) connect without pre-shared credentials
 - The surface is read/prepare only; omitting auth reduces friction for agent builders
@@ -26,19 +26,19 @@ If you need a private MCP with server keys and writes, run [celina-mcp](https://
 |----------|---------|
 | `tools/list` | Tool names, descriptions, and JSON input schemas |
 | `tools/call` | On-chain reads via RPC; unsigned transaction payloads for prepare tools (Mento, Uniswap, GoodDollar reserve) |
-| Secrets | None — no private keys in the Vercel environment |
+| Secrets | None — no private keys in the Worker environment |
 
 ## Abuse mitigations
 
-- Vercel serverless execution limits (duration, memory, concurrency)
+- Cloudflare Workers execution limits (CPU time, memory, concurrency)
 - RPC provider rate limits on `CELO_RPC_URL_MAINNET`
 - Read-only tool surface — no `send_token`, `execute_*`, or `estimate_*` on hosted
-- Stateless serverless — no durable session store for Self registration flows on hosted
+- Stateless Worker isolates — no durable session store for Self registration flows on hosted
 
 ## Transport
 
-- HTTPS via Vercel (TLS terminated at the edge)
-- HSTS and platform headers managed by Vercel
+- HTTPS via Cloudflare (TLS terminated at the edge)
+- HSTS and platform headers managed by Cloudflare
 
 ## Reporting
 

@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noEmit": true,
-    "types": ["node"]
+    "types": ["node", "@cloudflare/workers-types"]
   },
-  "include": ["api/**/*.ts", "scripts/**/*.ts"]
+  "include": ["src/**/*.ts", "scripts/**/*.ts"]
 }
