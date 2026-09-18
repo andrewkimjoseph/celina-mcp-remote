@@ -76,8 +76,8 @@ async function main(): Promise<void> {
   if (names.some((n) => n.startsWith("estimate_"))) {
     throw new Error("estimate_* must not be on hosted MCP");
   }
-  if (tools.length !== 48) {
-    throw new Error(`expected 48 tools on hosted MCP, got ${tools.length}`);
+  if (tools.length !== 50) {
+    throw new Error(`expected 50 tools on hosted MCP, got ${tools.length}`);
   }
   console.log("hosted tool surface check ok");
 
