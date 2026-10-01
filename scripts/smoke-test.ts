@@ -324,10 +324,24 @@ async function main(): Promise<void> {
   }
   console.log("A2A write tool rejection ok");
 
-  const healthRes = await app.request("/health", { method: "GET" });
-  const healthBody = (await healthRes.json()) as { ok?: boolean };
-  if (healthRes.status !== 200 || healthBody.ok !== true) {
-    throw new Error(`health check failed: ${JSON.stringify(healthBody)}`);
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async () =>
+    new Response(JSON.stringify({ jsonrpc: "2.0", id: 1, result: "0xa4ec" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    })) as typeof fetch;
+  try {
+    const healthRes = await app.request(
+      "/health",
+      { method: "GET" },
+      { CELO_RPC_URL_MAINNET: "https://celo.example", ETH_RPC_URL_MAINNET: "https://eth.example" },
+    );
+    const healthBody = (await healthRes.json()) as { ok?: boolean; checks?: { celoRpc?: boolean } };
+    if (healthRes.status !== 200 || healthBody.ok !== true || healthBody.checks?.celoRpc !== true) {
+      throw new Error(`health check failed: ${JSON.stringify(healthBody)}`);
+    }
+  } finally {
+    globalThis.fetch = originalFetch;
   }
   console.log("health ok");
 }

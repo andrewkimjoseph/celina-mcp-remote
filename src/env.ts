@@ -5,6 +5,7 @@ export type WorkerEnv = {
 };
 
 export const DEFAULT_A2A_BASE_URL = "https://mcp.usecelina.xyz";
+export const DEFAULT_CELO_RPC_URL = "https://forno.celo.org";
 
 /**
  * Cloudflare Workers don't populate `process.env` from bindings — celina-mcp's

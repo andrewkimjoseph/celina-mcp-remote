@@ -47,9 +47,16 @@ npm run test:smoke   # expects 50 hosted tools, estimate_* and server-key tools 
 
 ## Deploy to Cloudflare Workers
 
-1. Cloudflare dashboard → Workers & Pages → Create → Workers → **Connect to Git** → select the `celina-mcp-remote` repository, branch `main`.
-2. Build command: `npm install`. Deploy command: `npx wrangler deploy` (or leave defaults — [`wrangler.jsonc`](wrangler.jsonc) drives the build).
-3. Set environment variables (Worker vars/secrets) in the dashboard:
+Deploy with the Wrangler CLI. [`wrangler.jsonc`](wrangler.jsonc) pins `account_id` to the CELINA Cloudflare account.
+
+```bash
+npm install
+npx wrangler deploy
+```
+
+If Wrangler reports an authentication or account error, delete `node_modules/.cache/wrangler/wrangler-account.json` and retry.
+
+Set secrets with `npx wrangler secret put NAME` (values from `.dev.vars` or `.env.local`; do not commit those files):
 
    | Variable | Required | Notes |
    |----------|----------|-------|
@@ -57,10 +64,9 @@ npm run test:smoke   # expects 50 hosted tools, estimate_* and server-key tools 
    | `ETH_RPC_URL_MAINNET` | Optional | ENS resolution |
    | `CELINA_A2A_BASE_URL` | Optional | Public base URL for A2A agent card (default `https://mcp.usecelina.xyz`) |
 
-   Do **not** set `CELO_PRIVATE_KEY` or `SELF_AGENT_PRIVATE_KEY`.
-4. Validate on the assigned `*.workers.dev` URL before pointing `mcp.usecelina.xyz` DNS at the Worker.
+Do **not** set `CELO_PRIVATE_KEY` or `SELF_AGENT_PRIVATE_KEY`.
 
-For manual deploys from a checkout: `npx wrangler deploy`.
+Confirm `https://mcp.usecelina.xyz/health` after deploy. Attach that custom domain on the Worker if it is not already routed.
 
 ## MCP client config
 

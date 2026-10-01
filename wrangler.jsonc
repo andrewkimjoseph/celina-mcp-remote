@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "celina-mcp-remote",
+  "account_id": "123527d9c3c3ad3e1fa18b2aff52dd01",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-19",
   "compatibility_flags": ["nodejs_compat"],
