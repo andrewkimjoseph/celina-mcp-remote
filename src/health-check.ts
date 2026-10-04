@@ -1,4 +1,6 @@
 export const HEALTH_CHECK_TIMEOUT_MS = 2_000;
+/** Optional ENS probe. Stays under the status page's 1s slow threshold. */
+export const ETH_HEALTH_TIMEOUT_MS = 800;
 
 export async function checkUrl(
   url: string,

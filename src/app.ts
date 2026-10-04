@@ -3,7 +3,7 @@ import type { Context } from "hono";
 import { cors } from "hono/cors";
 import { handleA2ARequest } from "@andrewkimjoseph/celina-mcp/a2a";
 import { copyEnvToProcessEnv, DEFAULT_A2A_BASE_URL, DEFAULT_CELO_RPC_URL, type WorkerEnv } from "./env.js";
-import { checkUrl, rpcChainIdInit } from "./health-check.js";
+import { checkUrl, ETH_HEALTH_TIMEOUT_MS, rpcChainIdInit } from "./health-check.js";
 import { handleMcp } from "./mcp-handler.js";
 
 type AppBindings = { Bindings: WorkerEnv };
@@ -41,9 +41,11 @@ export function createApp(): Hono<AppBindings> {
     const ethUrl = c.env?.ETH_RPC_URL_MAINNET?.trim();
     const [celoRpc, ethRpc] = await Promise.all([
       checkUrl(celoUrl, rpcChainIdInit()),
-      ethUrl ? checkUrl(ethUrl, rpcChainIdInit()) : Promise.resolve(true),
+      ethUrl
+        ? checkUrl(ethUrl, rpcChainIdInit(), ETH_HEALTH_TIMEOUT_MS)
+        : Promise.resolve(true),
     ]);
-    const ok = celoRpc && ethRpc;
+    const ok = celoRpc;
     return c.json(
       { ok, service: "celina-mcp", checks: { celoRpc, ethRpc } },
       ok ? 200 : 503,
