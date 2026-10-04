@@ -325,20 +325,51 @@ async function main(): Promise<void> {
   console.log("A2A write tool rejection ok");
 
   const originalFetch = globalThis.fetch;
-  globalThis.fetch = (async () =>
-    new Response(JSON.stringify({ jsonrpc: "2.0", id: 1, result: "0xa4ec" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    })) as typeof fetch;
+  const rpcFetch = (statusFor: (url: string) => number) =>
+    (async (input: RequestInfo | URL) => {
+      const status = statusFor(String(input));
+      return new Response(status === 200 ? "ok" : "no", { status });
+    }) as typeof fetch;
+  const healthEnv = {
+    CELO_RPC_URL_MAINNET: "https://celo.example",
+    ETH_RPC_URL_MAINNET: "https://eth.example",
+  };
   try {
-    const healthRes = await app.request(
-      "/health",
-      { method: "GET" },
-      { CELO_RPC_URL_MAINNET: "https://celo.example", ETH_RPC_URL_MAINNET: "https://eth.example" },
-    );
-    const healthBody = (await healthRes.json()) as { ok?: boolean; checks?: { celoRpc?: boolean } };
-    if (healthRes.status !== 200 || healthBody.ok !== true || healthBody.checks?.celoRpc !== true) {
+    globalThis.fetch = rpcFetch(() => 200);
+    const healthRes = await app.request("/health", { method: "GET" }, healthEnv);
+    const healthBody = (await healthRes.json()) as {
+      ok?: boolean;
+      checks?: { celoRpc?: boolean; ethRpc?: boolean };
+    };
+    if (
+      healthRes.status !== 200 ||
+      healthBody.ok !== true ||
+      healthBody.checks?.celoRpc !== true ||
+      healthBody.checks?.ethRpc !== true
+    ) {
       throw new Error(`health check failed: ${JSON.stringify(healthBody)}`);
+    }
+
+    globalThis.fetch = rpcFetch((url) => (url.includes("eth.example") ? 503 : 200));
+    const ethDown = await app.request("/health", { method: "GET" }, healthEnv);
+    const ethDownBody = (await ethDown.json()) as {
+      ok?: boolean;
+      checks?: { celoRpc?: boolean; ethRpc?: boolean };
+    };
+    if (
+      ethDown.status !== 200 ||
+      ethDownBody.ok !== true ||
+      ethDownBody.checks?.celoRpc !== true ||
+      ethDownBody.checks?.ethRpc !== false
+    ) {
+      throw new Error(`ethereum failure should stay up: ${JSON.stringify(ethDownBody)}`);
+    }
+
+    globalThis.fetch = rpcFetch((url) => (url.includes("celo.example") ? 503 : 200));
+    const celoDown = await app.request("/health", { method: "GET" }, healthEnv);
+    const celoDownBody = (await celoDown.json()) as { ok?: boolean; checks?: { celoRpc?: boolean } };
+    if (celoDown.status !== 503 || celoDownBody.ok !== false || celoDownBody.checks?.celoRpc !== false) {
+      throw new Error(`celo failure should be 503: ${JSON.stringify(celoDownBody)}`);
     }
   } finally {
     globalThis.fetch = originalFetch;
