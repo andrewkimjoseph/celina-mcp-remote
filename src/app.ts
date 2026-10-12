@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import type { Context } from "hono";
 import { cors } from "hono/cors";
-import { handleA2ARequest } from "@andrewkimjoseph/celina-mcp/a2a";
+import { handleA2ARequest } from "@cnvlabskoxyz/celina-mcp/a2a";
 import { copyEnvToProcessEnv, DEFAULT_A2A_BASE_URL, DEFAULT_CELO_RPC_URL, type WorkerEnv } from "./env.js";
 import { checkUrl, ETH_HEALTH_TIMEOUT_MS, rpcChainIdInit } from "./health-check.js";
 import { handleMcp } from "./mcp-handler.js";

@@ -2,7 +2,7 @@
   "name": "celina-mcp-remote",
   "version": "0.2.3",
   "private": true,
-  "description": "Cloudflare Worker-hosted remote read-only Streamable HTTP + A2A endpoint for @andrewkimjoseph/celina-mcp",
+  "description": "Cloudflare Worker-hosted remote read-only Streamable HTTP + A2A endpoint for @cnvlabskoxyz/celina-mcp",
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
@@ -14,7 +14,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@andrewkimjoseph/celina-mcp": "0.28.1",
+    "@cnvlabskoxyz/celina-mcp": "1.0.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "hono": "^4.9.6",
     "ox": "^0.11.3"

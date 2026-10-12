@@ -3,7 +3,7 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import {
   createServer,
   drainCelinaAnalytics,
-} from "@andrewkimjoseph/celina-mcp/server";
+} from "@cnvlabskoxyz/celina-mcp/server";
 
 function acceptsEventStream(request: Request): boolean {
   const accept = request.headers.get("accept") ?? "";
