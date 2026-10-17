@@ -120,3 +120,7 @@ See [celina-mcp README — Hosted](../celina-mcp/README.md#hosted-reads--prepare
 ## Security
 
 The hosted endpoint is **intentionally public** (no API key): read/prepare tools only, no server private keys. Automated scanners that require authentication on `tools/list` will report failures for this deployment profile — see [SECURITY.md](./SECURITY.md) for the threat model and what is exposed.
+
+## License
+
+MIT — Copyright (c) 2026 CNV Labs KO XYZ.
